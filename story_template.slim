@@ -1,0 +1,51 @@
+doctype html
+html
+  head
+    title Slim Examples
+    meta name="keywords" content="template language"
+    meta name="author" content="nigel"
+    link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'
+    link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet' type='text/css'
+    link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet"
+
+    
+
+    css:
+      body { background-color: white; }
+      h1   {
+              color: #00c12b;  
+              font-family: 'Russo One', sans-serif;
+              font-size: 53pt;
+              margin-bottom: 0;
+              margin-top: 23px;
+           }
+      h2   {
+              color: black;  
+              font-family: 'Nunito', sans-serif;
+              font-size: 28pt;
+              margin-top: 0px;
+           }
+      .story {
+            height: 385px;
+            width: 600px;
+            border: 1px solid black;
+            padding-left: 2em;
+            background-color: #8fff96;
+      }
+
+      @media all {
+        .page-break { display: none; }
+      }
+
+      @media print {
+        .page-break { display: block; page-break-before: always; }
+      }
+  body
+    #content
+      - for page in issues.each_slice(4).to_a
+        - for issue in page
+          div.story
+            h1 = issue.key
+            h2 = issue.summary
+        .page-break
+          
