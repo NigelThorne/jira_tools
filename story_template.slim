@@ -7,45 +7,51 @@ html
     link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'
     link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet' type='text/css'
     link href="https://fonts.googleapis.com/css?family=Russo+One" rel="stylesheet"
-
     
+    script src="https://cdn.jsdelivr.net/jdenticon/1.3.2/jdenticon.min.js"
+    script src="https://cdn.jsdelivr.net/js-md5/0.3.0/md5.min.js"
 
     css:
       body { background-color: white; }
+      .story {
+            display: block;
+            float: left; 
+            height: 200px;
+            width: 300px;
+            border: 1px solid black;
+            padding-left: 1em;
+            background-color: #8fff96;
+            page-break-inside: avoid;
+      }
       h1   {
               color: #00c12b;  
               font-family: 'Russo One', sans-serif;
-              font-size: 53pt;
+              font-size: 26pt;
               margin-bottom: 0;
-              margin-top: 23px;
+              margin-top: 10px;
            }
       h2   {
               color: black;  
               font-family: 'Nunito', sans-serif;
-              font-size: 28pt;
+              font-size: 14pt;
               margin-top: 0px;
            }
-      .story {
-            height: 385px;
-            width: 600px;
-            border: 1px solid black;
-            padding-left: 2em;
-            background-color: #8fff96;
+      svg {
+            background-color: white;
+            margin-right: 7px;
       }
 
-      @media all {
-        .page-break { display: none; }
-      }
-
-      @media print {
-        .page-break { display: block; page-break-before: always; }
-      }
   body
     #content
-      - for page in issues.each_slice(4).to_a
-        - for issue in page
-          div.story
-            h1 = issue.key
-            h2 = issue.summary
-        .page-break
+      - @index = 0
+      - @cfrom = '#8fff96'
+      - @cto = '#968fff'
+      - @issues.each.with_index do |issue, index|
+        - @bgcol = gradiate_color(@cfrom, @cto, index.to_f/@issues.count)
+        div.story style="background-color: #{@bgcol};"
+          h1 style="color: #{darken_color(@bgcol)};"
+            svg width="60" height="60" data-jdenticon-hash="#{Digest::MD5.hexdigest( issue.key )}"
+            = issue.key
+          h2 = issue.summary
+
           

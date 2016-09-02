@@ -5,8 +5,42 @@ require 'jira-ruby'
 require 'awesome_print'
 require 'slim'
 require "pit"
+require 'digest'
 
 # SET EDITOR=Notepad.exe
+
+# Amount should be a decimal between 0 and 1. Lower means darker
+def darken_color(hex_color, amount=0.5)
+  rgb = hex_to_rbg hex_color
+  rgb[0] = (rgb[0].to_i * amount).round
+  rgb[1] = (rgb[1].to_i * amount).round
+  rgb[2] = (rgb[2].to_i * amount).round
+  "#%02x%02x%02x" % rgb
+end
+  
+# Amount should be a decimal between 0 and 1. Higher means lighter
+def lighten_color(hex_color, amount=0.6)
+  rgb = hex_to_rbg hex_color
+  rgb[0] = [(rgb[0].to_i + 255 * amount).round, 255].min
+  rgb[1] = [(rgb[1].to_i + 255 * amount).round, 255].min
+  rgb[2] = [(rgb[2].to_i + 255 * amount).round, 255].min
+  "#%02x%02x%02x" % rgb
+end
+
+def hex_to_rbg(hex_color)
+  hex_color = hex_color.gsub('#','')
+  hex_color.scan(/../).map {|color| color.hex.to_i}
+end
+
+def gradiate_color(start_hex_color, destination_hex_color, amount=0.5)
+  s_rgb = hex_to_rbg(start_hex_color)
+  d_rgb = hex_to_rbg(destination_hex_color)
+  rgb = []
+  rgb[0] = s_rgb[0] + ((d_rgb[0] - s_rgb[0]) * amount).round
+  rgb[1] = s_rgb[1] + ((d_rgb[1] - s_rgb[1]) * amount).round
+  rgb[2] = s_rgb[2] + ((d_rgb[2] - s_rgb[2]) * amount).round
+  "#%02x%02x%02x" % rgb
+end
 
 config = Pit.get("jira", :require => 
     { "url" => "http://jira.vsl.com.au:80/",  

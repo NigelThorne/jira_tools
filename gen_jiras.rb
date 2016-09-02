@@ -4,6 +4,7 @@
 require 'rubygems'
 require 'jira-ruby'
 require 'awesome_print'
+require 'pit'
 
 # SET EDITOR=Notepad.exe
 
@@ -11,8 +12,6 @@ config = Pit.get("jira", :require =>
     { "url" => "http://jira.vsl.com.au:80/",  
       "username" => "default value", 
       "password" => "default value" })
-
-
 
 def get_jira_client(config)
     options = {
@@ -39,7 +38,7 @@ end
 
 def parse_tasks_file(lines)
 	lines
-		.reject{|l| /^[^\*]/ =~ l} #ignore titles
+		.reject{|l| /^[^\*]/ =~ l} #ignore titles (or anything that doesn't start with a *)
 		.map{|l| l.gsub(/\n$/,"")}
 		.map{|l|
 			_, indent, title, rest = l.match(/^(\*+)\s([^-]+)(-.*)?$/).to_a
@@ -64,44 +63,55 @@ end
 
 @lines = File.readlines(ARGV[0])
 @tasks = parse_tasks_file(@lines)
-@client = get_jira_client();
+@client = get_jira_client(config);
 
 types = @client.Issuetype.all
 
 @user_story_type = types.find{|t| t.name == "User Story"}
 @task_type = types.find{|t| t.name == "Task"}
-@project = @client.Project.find('LAACM')
+@project = @client.Project.find('TAISS')
 
-ap @project
-ap @user_story_type
+puts "==== Project #{@project.key} ===="
+puts @project.description
+puts "==== Story Type ===="
+puts @user_story_type.name
 
-
-def story_fields(project_id, type_id, name, notes)
+def story_fields(project_id, type_id, name, notes, label, fixversion)
 	{"fields"=>
 		{
-			"summary"=>"2016_1 Patch: "+ name,
+			"summary"=>name,
 			"description"=>notes,
 			"project"=>{"id"=>project_id},
-			"labels"=>["2016_1Patch"],
+			"labels"=>[label],
 			#"subtasks" => [], # TODO : add subtasks (need issuelinks)
-			"issuetype"=>{"id"=>type_id}
+			"issuetype"=>{"id"=>type_id},
+#			"fixversions"=>[fixversion],
 		}
 	}
 end
 
-@story_fields = @tasks.map {|task| story_fields(@project.id, @user_story_type.id, task[:title], task[:notes])}
+@story_fields = @tasks.map { |task| 
+	story_fields(
+		@project.id, 
+		@user_story_type.id, 
+		task[:title], 
+		task[:notes],
+		"CR9342", 
+		"CR9342")
+}
 
-puts "I'll stop here cos you were just about to change jira!!"
-exit
+@force = ARGV.include?("--force")
 
-@force = ARGV.contains("--force")
+if(!@force)
+	puts "** No changes will be made **"
+end
 
 @story_fields.each{|story|
 	puts "Creating Story:"
 	ap story
 
-	issue = @client.Issue.build
-	if(force)
+	if(@force)
+		issue = @client.Issue.build
 		ap issue.save(story) 
 		puts "--------story saved--------"
 	else
