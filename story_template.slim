@@ -16,8 +16,8 @@ html
       .story {
             display: block;
             float: left; 
-            height: 200px;
-            width: 300px;
+            height: 210px;
+            width: 370px;
             border: 1px solid black;
             padding-left: 1em;
             background-color: #8fff96;
@@ -26,19 +26,28 @@ html
       h1   {
               color: #00c12b;  
               font-family: 'Russo One', sans-serif;
-              font-size: 26pt;
+              font-size: 20pt;
               margin-bottom: 0;
               margin-top: 10px;
+              margin-right: 10px;
+              float:right;
            }
       h2   {
               color: black;  
               font-family: 'Nunito', sans-serif;
-              font-size: 14pt;
+              font-size: 26pt;
               margin-top: 0px;
+              overflow: hidden;
+              //white-space: nowrap; /* Don't forget this one */
+              text-overflow: ellipsis;
+              float:left;
            }
       svg {
             background-color: white;
             margin-right: 7px;
+            position: relative;
+            top: 0;
+            left: 0;
       }
 
   body
@@ -49,8 +58,8 @@ html
       - @issues.each.with_index do |issue, index|
         - @bgcol = gradiate_color(@cfrom, @cto, index.to_f/@issues.count)
         div.story style="background-color: #{@bgcol};"
+          svg width="60" height="60" data-jdenticon-hash="#{Digest::MD5.hexdigest( issue.key )}"
           h1 style="color: #{darken_color(@bgcol)};"
-            svg width="60" height="60" data-jdenticon-hash="#{Digest::MD5.hexdigest( issue.key )}"
             = issue.key
           h2 = issue.summary
 

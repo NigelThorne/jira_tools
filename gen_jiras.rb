@@ -11,7 +11,8 @@ require 'pit'
 config = Pit.get("jira", :require => 
     { "url" => "http://jira.vsl.com.au:80/",  
       "username" => "default value", 
-      "password" => "default value" })
+      "password" => "default value",
+      "project_id" => "TAISS" })
 
 def get_jira_client(config)
     options = {
@@ -61,15 +62,19 @@ def add_task(task, prev)
 	end
 end
 
-@lines = File.readlines(ARGV[0])
+@filename = ARGV[0]
+@lines = File.readlines(@filename)
 @tasks = parse_tasks_file(@lines)
+@project_id = config["project_id"]
+puts "Stories will be added to Project #{@project_id}"
+
 @client = get_jira_client(config);
 
 types = @client.Issuetype.all
 
 @user_story_type = types.find{|t| t.name == "User Story"}
 @task_type = types.find{|t| t.name == "Task"}
-@project = @client.Project.find('TAISS')
+@project = @client.Project.find(@project_id)
 
 puts "==== Project #{@project.key} ===="
 puts @project.description
@@ -96,8 +101,8 @@ end
 		@user_story_type.id, 
 		task[:title], 
 		task[:notes],
-		"CR9342", 
-		"CR9342")
+		"CR9362", 
+		"CR9362")
 }
 
 @force = ARGV.include?("--force")
@@ -107,14 +112,15 @@ if(!@force)
 end
 
 @story_fields.each{|story|
-	puts "Creating Story:"
-	ap story
-
 	if(@force)
+		puts "Creating Story:"
 		issue = @client.Issue.build
 		ap issue.save(story) 
+		ap story
 		puts "--------story saved--------"
 	else
-		puts "skipped..."
+		puts "...Skipping..."
+		ap story
+		puts "--------story skipped--------"
 	end
 }
