@@ -36,6 +36,7 @@ html
               font-family: 'Nunito', sans-serif;
               font-size: 20pt;
               margin-top: 0px;
+              margin-right: 20px;
               overflow: hidden;
               //white-space: nowrap; /* Don't forget this one */
               text-overflow: ellipsis;
@@ -57,10 +58,16 @@ html
   body
     h1 Jira Cards Printer
     form method='get' action='show'
-      h2 JQL Query
+      div
+        h2 JQL Query
 
-      textarea id='query' name='query' placeholder="eg... (project = CERN and sprint = 1135 order by priority DESC)"
-      br
+        textarea id='query' name='query' placeholder="eg... (project = CERN and sprint = 1135 order by priority DESC)"
+        br
+        h2 Color Range
+        input type='text' name='cfrom' value=@cfrom 
+        input type='text' name='cto' value=@cto 
+        br
+        br
       input type='submit' value="Show"
 
           

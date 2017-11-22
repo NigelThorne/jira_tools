@@ -65,6 +65,12 @@ end
 
 class Proj
     attr_accessor :issues
+    attr_accessor :cfrom, :cto
+
+    def initialize
+      @cfrom = '#8fff96'
+      @cto = '#968fff'
+    end
 end
 
 if __FILE__ == $0

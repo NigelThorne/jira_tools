@@ -35,13 +35,22 @@ html
       h2   {
               color: black;  
               font-family: 'Nunito', sans-serif;
-              font-size: 20pt;
+              font-size: 15pt;
               margin-top: 0px;
               overflow: hidden;
               //white-space: nowrap; /* Don't forget this one */
               text-overflow: ellipsis;
               float:left;
            }
+      h3   {
+              color: black;  
+              font-family: 'Nunito', sans-serif;
+              font-size: 20pt;
+              position: relative;
+              top: -20px;
+              left: 0px;
+              float:right;
+           }           
       svg {
             background-color: white;
             margin-right: 7px;
@@ -53,11 +62,12 @@ html
   body
     #content
       - @index = 0
-      - @cfrom = '#8fff96'
-      - @cto = '#968fff'
+      - @cfrom ||= '#8fff96'
+      - @cto ||= '#968fff'
       - @issues.each.with_index do |issue, index|
         - @bgcol = gradiate_color(@cfrom, @cto, index.to_f/@issues.count)
         div.story style="background-color: #{@bgcol};"
+          h3 = issue.customfield_10232.to_i > 0 ? "[#{issue.customfield_10232.to_i}]" : "[__]"
           svg width="60" height="60" data-jdenticon-hash="#{Digest::MD5.hexdigest( issue.key )}"
           h1 style="color: #{darken_color(@bgcol)};"
             = issue.key

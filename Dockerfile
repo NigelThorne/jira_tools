@@ -14,6 +14,7 @@ RUN cd /root/src/ruby-2.2.2; ./configure; make install
 
 RUN gem update --system
 RUN gem install bundler
+RUN gem install foreman
 
 ADD . /root/sinatra
 RUN cd /root/sinatra; bundle install
