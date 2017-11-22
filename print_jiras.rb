@@ -62,13 +62,15 @@ def get_jira_client(config)
     JIRA::Client.new(options)
 end
 
-@template =Slim::Template.new(){File.read("story_template.slim")}
 
 class Proj
     attr_accessor :issues
 end
 
-client = get_jira_client(config) 
-project = Proj.new
-project.issues = client.Issue.jql(ARGV[0])
-puts @template.render(project)
+if __FILE__ == $0
+  @template =Slim::Template.new(){File.read("story_template.slim")}
+  client = get_jira_client(config) 
+  project = Proj.new
+  project.issues = client.Issue.jql(ARGV[0])
+  puts @template.render(project)
+end
