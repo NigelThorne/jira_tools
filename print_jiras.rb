@@ -27,6 +27,15 @@ def lighten_color(hex_color, amount=0.6)
   "#%02x%02x%02x" % rgb
 end
 
+def highlight_color(hex_color, amount=0.6)
+  rgb = hex_to_rbg hex_color
+  if ((rgb[0].to_i + rgb[1].to_i + rgb[2].to_i ) > ((255+255+255)/2) )
+    darken_color(hex_color, amount)
+  else
+    lighten_color(hex_color, amount)
+  end
+end
+
 def hex_to_rbg(hex_color)
   hex_color = hex_color.gsub('#','')
   hex_color.scan(/../).map {|color| color.hex.to_i}
@@ -56,7 +65,7 @@ def get_jira_client(config)
       :site         => config["url"],#'http://mydomain.atlassian.net:443/',
       :context_path => '',
       :auth_type    => :basic,
-      :use_ssl      => false
+      :use_ssl      => false,
     }
 
     JIRA::Client.new(options)
@@ -64,7 +73,7 @@ end
 
 
 class Proj
-    attr_accessor :issues
+    attr_accessor :issues, :qrs
     attr_accessor :cfrom, :cto
 
     def initialize

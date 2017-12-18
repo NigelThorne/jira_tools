@@ -12,16 +12,18 @@ html
     script src="https://cdn.jsdelivr.net/js-md5/0.3.0/md5.min.js"
 
     css:
-      body { background-color: white; }
+      body { background-color: white; 
+            }
       .story {
             display: block;
-            float: left; 
-            height: 210px;
-            width: 370px;
-            border: 1px solid black;
-            padding-left: 1em;
+            height: 240px;
+            width: 360px;
+            border: 2px solid black;
+            padding-left: 10px;
             background-color: #8fff96;
+            -webkit-print-color-adjust: exact;
             page-break-inside: avoid;
+            float:left;
       }
       h1   {
               color: #00c12b;  
@@ -38,9 +40,7 @@ html
               font-size: 15pt;
               margin-top: 0px;
               overflow: hidden;
-              //white-space: nowrap; /* Don't forget this one */
               text-overflow: ellipsis;
-              float:left;
            }
       h3   {
               color: black;  
@@ -53,10 +53,13 @@ html
            }           
       svg {
             background-color: white;
-            margin-right: 7px;
+            margin-top: 7px;
             position: relative;
             top: 0;
             left: 0;
+      }
+      img {
+        margin-top: 5px;
       }
 
   body
@@ -65,11 +68,14 @@ html
       - @cfrom ||= '#8fff96'
       - @cto ||= '#968fff'
       - @issues.each.with_index do |issue, index|
-        - @bgcol = gradiate_color(@cfrom, @cto, index.to_f/@issues.count)
-        div.story style="background-color: #{@bgcol};"
-          h3 = issue.customfield_10232.to_i > 0 ? "[#{issue.customfield_10232.to_i}]" : "[__]"
-          svg width="60" height="60" data-jdenticon-hash="#{Digest::MD5.hexdigest( issue.key )}"
-          h1 style="color: #{darken_color(@bgcol)};"
+        - @bgcol = gradiate_color(@cfrom, @cto, (index.to_f / @issues.count))
+        - # /
+        div.story style="background-color: #{@bgcol};" 
+          h3 = (issue.respond_to?(:customfield_10232) && issue.customfield_10232.to_i > 0) ? "[#{issue.customfield_10232.to_i}]" : "[__]"
+
+          img src="/qr?key=#{issue.key}"
+          
+          h1 style="color: #{highlight_color(@bgcol)};"
             = issue.key
           h2 = issue.summary
 

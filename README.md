@@ -21,3 +21,31 @@ then I push those stories to Jira.
 Note: I use the gem "pit" to store user credentials for Jira in a file. 
 You need an environment variable "EDITOR" set to something  (like Notepad.exe in windows) so you get prompted to fill in the credentials. 
 they are stored on your local machine in your user's .pit folder.
+
+# Now runs from Docker!
+
+# build image
+docker build . -t nwt/jira_tools:latest
+
+# run image
+docker run --name jira_tools --restart=always -p 5678:80 nwt/jira_tools
+
+# TODO
+
+## Config page: To set Jira URL
+	- Set your jira server url: Then I can push the docker image to docker hub
+
+## MoonJS
+	- Make the UI more responsive... validate fields etc.
+	- make pretty
+	- add silly comments when waiting for jira to respond.
+
+## Handle Exceptions
+	- Make authentication errors redirect you back to re-login. 
+
+## TakeCredit
+	- Add "NigelThorne" and Blog address to submit form. 
+
+## Traefik 
+	- do something to allow multiple requests at once. 
+	
