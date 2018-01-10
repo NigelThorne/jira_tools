@@ -16,7 +16,7 @@ then I push those stories to Jira.
 * Clone this repo  `git clone ...`
 * Install bundler if you don't have it.   `gem install bundler`
 * bundle install the gems  `bundle install`
-* Run it `bundle exec ruby print_jiras  xxxx`  where xxx is your jql query.
+* Run it `bundle exec ` where xxx is your jql query.
 
 # Now runs from Docker!
 
@@ -24,12 +24,9 @@ then I push those stories to Jira.
 docker build . -t nwt/jira_tools:latest
 
 # run image
-docker run --name jira_tools --restart=always -p 5678:8888 nwt/jira_tools
+docker run --name jira_tools --restart=always -p 5678:4567 nwt/jira_tools
 
 # TODO
-
-## Config page: To set Jira URL
-	- Set your jira server url: Then I can push the docker image to docker hub
 
 ## MoonJS
 	- Make the UI more responsive... validate fields etc.
@@ -39,9 +36,16 @@ docker run --name jira_tools --restart=always -p 5678:8888 nwt/jira_tools
 ## Handle Exceptions
 	- Make authentication errors redirect you back to re-login. 
 
-## TakeCredit
+## Take Credit
 	- Add "NigelThorne" and Blog address to submit form. 
 
-## Traefik 
-	- do something to allow multiple requests at once. 
-	
+## Multiple Requests At Once
+	- Traefik? 
+	- Angelo
+		- I moved from Sinatra to Angelo, but I need to make calls to Jira async to get full benefit.
+
+# Make urls (page of stories) sharable
+	- Use sessions to prompt for login and remember Jira credentials 
+	- Add "logout"
+	- change form to GET so urls to include the query.. so sharable
+
