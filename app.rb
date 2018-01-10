@@ -1,15 +1,40 @@
-require 'sinatra'
-require 'sinatra/base'
+require 'rack'
+require 'tilt'
+
+require 'angelo'
+
 require_relative './print_jiras'
 require 'rqrcode'
 require 'json'
 require 'slim'
 
 
-class App < Sinatra::Base
-  def initialize()
-    super 
-    
+class AngeloServer < Angelo::Base
+ def content_type type
+  case type
+   when :png
+    headers 'Content-Type' => 'image/png'
+   when :css
+    headers 'Content-Type' => 'text/css'
+   when Symbol
+    super
+   else
+    headers 'Content-Type' => type
+  end
+ end
+ def transfer_encoding encoding           # just because you ought to have this as well
+  headers 'Transfer-Encoding' => encoding
+ end
+end
+
+
+class App < AngeloServer
+
+  addr '0.0.0.0'
+  
+  Temple::Templates::Tilt(Slim::Engine, register_as: :slim)
+
+  def load_config
     begin 
       @config = JSON.parse(File.read("server.config"))
     rescue 
@@ -17,10 +42,15 @@ class App < Sinatra::Base
     end
   end
 
+  def slim( file, scope )
+    file = file.to_s + ".slim" if file.is_a? Symbol
+    Tilt.new("views/"+file).render(scope)
+  end
 
   def ensure_configured
+    load_config
     #condition do
-      redirect( "/config" ) if(@config.try(:[], "URL").blank?) 
+    redirect( "/config" ) if(@config.nil? || @config["URL"].blank?) 
     #end
   end
 
@@ -28,7 +58,7 @@ class App < Sinatra::Base
     ensure_configured
 
     defaults = Proj.new
-    slim("form.slim",defaults)
+    slim("index.slim",defaults)
   end
 
   post '/show' do
@@ -51,7 +81,7 @@ class App < Sinatra::Base
   end
 
   get '/qr' do 
-    content_type "image/png"
+    content_type :png
     key = params['key']
     qrcode = RQRCode::QRCode.new("http://jira.vsl.com.au/browse/#{key}")
     # With default options specified explicitly
@@ -61,22 +91,49 @@ class App < Sinatra::Base
               fill: 'white',
               color: 'black',
               size: 100,
-              border_modules: 0,
+              border_modules: 1,
               module_px_size: 5,
               file: nil # path to write
               )
     png.to_s
   end
 
-
   get '/config' do
+    load_config
     slim :config_template, @config
   end
 
   post '/config' do
     @config["URL"] = params["URL"]
-    File.write("server.config","o"){|f| f << @config.to_json}
-    slim :config_template, @config
+    File.write("server.config",@config.to_json)
+    redirect( "/config" )
   end
+
+  # BELOW follows an example of using non blocking IO to make a web call and return the result... we should do this with the JIRA calls.
+
+  # get '/c' do
+  #   future(:jira).value.to_s + "\n"
+  # end
+
+  # task :jira do
+
+  #   body = ''
+
+  #   sock = Celluloid::IO::TCPSocket.new 'example.com', 80
+  #   begin
+  #     sock.write "GET /big_file.tgz HTTP/1.1\n" +
+  #                "Host: example.com\n" +
+  #                "Connection: close\n\n"
+  #     while data = sock.readpartial(4096)
+  #       body << data
+  #     end
+  #   rescue EOFError
+  #   ensure
+  #     sock.close
+  #   end
+
+  #   body.length
+
+  # end
 
 end

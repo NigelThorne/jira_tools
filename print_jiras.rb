@@ -51,6 +51,10 @@ def gradiate_color(start_hex_color, destination_hex_color, amount=0.5)
   "#%02x%02x%02x" % rgb
 end
 
+def epic_color(epic_id)
+    "#" + Digest::MD5.hexdigest(epic_id)[0,6]
+end
+
 config = Pit.get("jira", :require => 
     { "url" => "http://jira.vsl.com.au:80/",  
       "username" => "default value", 

@@ -18,17 +18,13 @@ then I push those stories to Jira.
 * bundle install the gems  `bundle install`
 * Run it `bundle exec ruby print_jiras  xxxx`  where xxx is your jql query.
 
-Note: I use the gem "pit" to store user credentials for Jira in a file. 
-You need an environment variable "EDITOR" set to something  (like Notepad.exe in windows) so you get prompted to fill in the credentials. 
-they are stored on your local machine in your user's .pit folder.
-
 # Now runs from Docker!
 
 # build image
 docker build . -t nwt/jira_tools:latest
 
 # run image
-docker run --name jira_tools --restart=always -p 5678:80 nwt/jira_tools
+docker run --name jira_tools --restart=always -p 5678:8888 nwt/jira_tools
 
 # TODO
 

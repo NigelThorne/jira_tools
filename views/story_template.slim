@@ -1,7 +1,7 @@
 doctype html
 html
   head
-    title Slim Examples
+    title Stories
     meta name="keywords" content="template language"
     meta name="author" content="nigel"
     link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'
@@ -14,52 +14,89 @@ html
     css:
       body { background-color: white; 
             }
+
+      #content {
+        /*display: grid;
+        grid-gap: 1px;
+        grid-template-columns: repeat(auto-fill, 76mm);
+        grid-auto-rows: auto;*/
+        -webkit-print-color-adjust: exact;
+        width: 100%;
+      }
+
       .story {
-            display: block;
-            height: 240px;
-            width: 360px;
-            border: 2px solid black;
-            padding-left: 10px;
-            background-color: #8fff96;
-            -webkit-print-color-adjust: exact;
-            page-break-inside: avoid;
-            float:left;
+        display: block;
+        page-break-inside: avoid;
+        break-inside: avoid-page;
+        width: 75mm;
+        height: 75mm;
+        border: 2px solid black;
+        align-items: stretch;
+         float: left;
+         margin: 10px;
       }
-      h1   {
-              color: #00c12b;  
-              font-family: 'Russo One', sans-serif;
-              font-size: 20pt;
-              margin-bottom: 0;
-              margin-top: 10px;
-              margin-right: 10px;
-              float:right;
-           }
-      h2   {
-              color: black;  
-              font-family: 'Nunito', sans-serif;
-              font-size: 15pt;
-              margin-top: 0px;
-              overflow: hidden;
-              text-overflow: ellipsis;
-           }
-      h3   {
-              color: black;  
-              font-family: 'Nunito', sans-serif;
-              font-size: 20pt;
-              position: relative;
-              top: -20px;
-              left: 0px;
-              float:right;
-           }           
-      svg {
-            background-color: white;
-            margin-top: 7px;
-            position: relative;
-            top: 0;
-            left: 0;
+
+      .epic {
+        grid-area: epic
       }
-      img {
-        margin-top: 5px;
+
+      .notes {
+        grid-area: notes
+      }
+
+      .story_content {
+        display: grid;
+        grid-template-areas: "epic barcode title estimate"
+                             "notes notes notes notes"
+                             "main main  main main"
+                             ;
+        grid-template-rows: 100px 80px 100px;
+        grid-template-columns: 10px 100px 1fr 40px;    
+        margin: 10px;
+        align-items: stretch;
+      }
+
+      .key {
+        grid-area: title;
+        vertical-align: middle;
+        text-align: center;
+        font-family: 'Russo One', sans-serif;
+        font-size: 20pt;
+       }
+
+      .summary   {
+        grid-area: main;
+
+        color: black;  
+        font-family: 'Nunito', sans-serif;
+        font-size: 15pt;
+        margin-top: 0px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+       }
+
+      .estimate {
+        grid-area: estimate;
+        color: black;  
+        font-family: 'Nunito', sans-serif;
+        font-size: 20pt;
+       }       
+
+      .barcode {
+        grid-area: barcode;
+        margin: 0px;
+      }
+
+      .clearfix:after { 
+         content: "."; 
+         visibility: hidden; 
+         display: block; 
+         height: 0; 
+         clear: both;
+      }
+
+      @media print {
+          .story_content {page-break-inside: avoid; break-inside: avoid;}
       }
 
   body
@@ -70,13 +107,17 @@ html
       - @issues.each.with_index do |issue, index|
         - @bgcol = gradiate_color(@cfrom, @cto, (index.to_f / @issues.count))
         - # /
-        div.story style="background-color: #{@bgcol};" 
-          h3 = (issue.respond_to?(:customfield_10232) && issue.customfield_10232.to_i > 0) ? "[#{issue.customfield_10232.to_i}]" : "[__]"
-
-          img src="/qr?key=#{issue.key}"
-          
-          h1 style="color: #{highlight_color(@bgcol)};"
-            = issue.key
-          h2 = issue.summary
+        div.story 
+          div.story_content
+            - @epic_col = (issue.respond_to?(:customfield_10430)&& issue.customfield_10430 ) ? epic_color(issue.customfield_10430) : "#ffffff"
+            span.epic style="background-color: #{@epic_col};" 
+            - @estimate = (issue.respond_to?(:customfield_10232) && issue.customfield_10232.to_i > 0) ? "[#{issue.customfield_10232.to_i}]" : "[__]"
+            h3.estimate = @estimate
+            img.barcode src="/qr?key=#{issue.key}"
+            h1.key style="color: #{highlight_color(@bgcol, 0.8)};"
+              = issue.key
+            h2.summary = issue.summary
+            span.notes
+      div style="clear: both;"
 
           

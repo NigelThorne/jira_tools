@@ -18,6 +18,7 @@ RUN apt-get clean
 RUN gem update --system
 RUN gem install bundler
 RUN gem install foreman
+RUN gem install sinatra-synchrony
 
 # Copy the Gemfile and Gemfile.lock into the image. 
 # Temporarily set the working directory to where they are. 
@@ -37,7 +38,7 @@ RUN cd /usr/src/app; bundle install
 
 WORKDIR /usr/src/app
 
-EXPOSE 8888
+EXPOSE 4567
 CMD ["foreman","start","-d","/usr/src/app"]
 
 
