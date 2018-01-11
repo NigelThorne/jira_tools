@@ -31,7 +31,7 @@ end
 class App < AngeloServer
 
   addr '0.0.0.0'
-  
+
   Temple::Templates::Tilt(Slim::Engine, register_as: :slim)
 
   def load_config
@@ -104,9 +104,10 @@ class App < AngeloServer
   end
 
   post '/config' do
+    load_config
     @config["URL"] = params["URL"]
     File.write("server.config",@config.to_json)
-    redirect( "/config" )
+    redirect( "/" )
   end
 
   # BELOW follows an example of using non blocking IO to make a web call and return the result... we should do this with the JIRA calls.
