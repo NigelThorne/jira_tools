@@ -38,7 +38,7 @@ class App < AngeloServer
     begin 
       @config = JSON.parse(File.read("server.config"))
     rescue 
-      @config = {"URL" => ""}  
+      @config = {"URL" => ENV['JIRA_URL'] || ""}  
     end
   end
 
