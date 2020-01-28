@@ -5,7 +5,7 @@ source "https://rubygems.org"
 # gem "rails"
 gem 'angelo'
 gem 'pit', '~> 0.0.7'
-gem 'jira-ruby', '~> 1.1'
+gem 'jira-ruby', '~> 1.7'
 gem 'awesome_print'
 gem 'slim'
 gem 'foreman'
