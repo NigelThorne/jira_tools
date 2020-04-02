@@ -45,7 +45,7 @@ GEM
       unf (>= 0.0.5, < 1.0.0)
     eventmachine (1.2.5)
     eventmachine (1.2.5-x86-mingw32)
-    foreman (0.87.0)
+    foreman (0.87.1)
     hitimes (1.2.6)
     hitimes (1.2.6-x86-mingw32)
     http (3.0.0)
