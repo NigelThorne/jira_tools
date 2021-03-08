@@ -16,7 +16,7 @@ GEM
       tilt (~> 2.0)
     atlassian-jwt (0.2.0)
       jwt (~> 2.1.0)
-    awesome_print (1.8.0)
+    awesome_print (1.9.2)
     celluloid (0.17.3)
       celluloid-essentials
       celluloid-extras
